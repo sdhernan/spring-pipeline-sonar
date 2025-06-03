@@ -72,10 +72,10 @@ jobs:
         env:
           # Es ALTAMENTE recomendado usar secretos de GitHub para estos valores por razones de seguridad.
           # GITHUB_TOKEN es proporcionado automáticamente por GitHub Actions.
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Necesario para obtener información de PRs
+          GITHUB_TOKEN: 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 # Necesario para obtener información de PRs
           # SONAR_TOKEN y SONAR_HOST_URL deben configurarse como secretos en tu repositorio de GitHub.
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} # Genera un token en SonarQube y añádelo a los secretos de este repo
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }} # Añade la URL de tu instancia SonarQube a los secretos de este repo
+          SONAR_TOKEN: a69149b0bc5c31bb5274f2e704eaa3246a686eed # Genera un token en SonarQube y añádelo a los secretos de este repo
+          SONAR_HOST_URL: https://gp.elidemy.com # Añade la URL de tu instancia SonarQube a los secretos de este repo
         with:
           # Argumentos adicionales para el escáner de SonarQube
           args:
