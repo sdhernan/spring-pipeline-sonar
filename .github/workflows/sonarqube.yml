@@ -81,15 +81,9 @@ jobs:
           args:
             # Clave única de tu proyecto en SonarQube.
             -Dsonar.projectKey=spring-pipeline-sonar
-            # Rutas separadas por comas a los directorios que contienen los archivos fuente principales.
-            # Para proyectos Java, esto apunta a tu carpeta de código fuente.
             -Dsonar.sources=src/main/java
-            # Rutas separadas por comas a los directorios que contienen las clases compiladas (archivos .class).
-            # Para proyectos Maven, esto suele ser 'target/classes'.
             -Dsonar.java.binaries=target/classes
-            # Opcional: Si tienes tests y quieres incluir su cobertura, descomenta y ajusta:
-            # -Dsonar.tests=src/test/java
-            # -Dsonar.junit.reportPaths=target/surefire-reports
-            # -Dsonar.jacoco.reportPaths=target/jacoco.exec
-            # Opcional: Activa el modo DEBUG para logs más detallados si necesitas depurar.
-            # -Dsonar.verbose=true
+            -Dsonar.tests=src/test/java
+            -Dsonar.junit.reportPaths=target/surefire-reports
+            -Dsonar.jacoco.reportPaths=target/jacoco.exec
+            -Dsonar.verbose=true
