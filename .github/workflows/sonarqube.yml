@@ -51,11 +51,11 @@ jobs:
 
       # Paso 2: Configurar el JDK (Java Development Kit)
       # Asegúrate de que la versión de Java coincida con la de tu proyecto Spring Boot.
-      - name: Set up JDK 17
+      - name: Set up JDK 8
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin' # Puedes usar 'adopt', 'zulu', 'microsoft' si lo prefieres
-          java-version: '17' # Cambia esto a la versión de Java que usa tu proyecto
+          java-version: '8' # Cambia esto a la versión de Java que usa tu proyecto
           cache: 'maven' # Esto ayuda a cachear las dependencias de Maven para acelerar las futuras ejecuciones
 
       # Paso 3: Construir el proyecto con Maven
