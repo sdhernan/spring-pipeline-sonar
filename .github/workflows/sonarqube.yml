@@ -1,0 +1,89 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+# This workflow helps you trigger a SonarQube analysis of your code and populates
+# GitHub Code Scanning alerts with the vulnerabilities found.
+# (this feature is available starting from SonarQube 9.7, Developer Edition and above)
+
+# 1. Make sure you add a valid GitHub configuration to your SonarQube (Administration > DevOps platforms > GitHub)
+
+# 2. Import your project on SonarQube
+#     * Add your repository as a new project by clicking "Create project" from your homepage.
+#
+# 3. Select GitHub Actions as your CI and follow the tutorial
+#     * a. Generate a new token and add it to your GitHub repository's secrets using the name SONAR_TOKEN
+#           (On SonarQube, click on your avatar on top-right > My account > Security or ask your administrator)
+#
+#     * b. Copy/paste your SonarQube host URL to your GitHub repository's secrets using the name SONAR_HOST_URL
+#
+#     * c. Copy/paste the project Key into the args parameter below
+#           (You'll find this information in SonarQube by following the tutorial or by clicking on Project Information at the top-right of your project's homepage)
+
+# Feel free to take a look at our documentation (https://docs.sonarqube.org/latest/analysis/github-integration/)
+# or reach out to our community forum if you need some help (https://community.sonarsource.com/c/sq/10)
+
+name: SonarQube analysis
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  pull-requests: read # allows SonarQube to decorate PRs with analysis results
+  contents: read # Allows checkout action to read repository contents
+
+jobs:
+  Analysis:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Paso 1: Clonar el repositorio
+      # fetch-depth: 0 es importante para SonarQube, ya que necesita el historial completo para algunas métricas (como el blame).
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Paso 2: Configurar el JDK (Java Development Kit)
+      # Asegúrate de que la versión de Java coincida con la de tu proyecto Spring Boot.
+      - name: Set up JDK 8
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin' # Puedes usar 'adopt', 'zulu', 'microsoft' si lo prefieres
+          java-version: '8' # Cambia esto a la versión de Java que usa tu proyecto
+          cache: 'maven' # Esto ayuda a cachear las dependencias de Maven para acelerar las futuras ejecuciones
+
+      # Paso 3: Construir el proyecto con Maven
+      # Este paso compila tu código y genera los archivos .class que SonarQube analizará.
+      # -DskipTests se usa para saltar la ejecución de tests si no es necesaria para el análisis de SonarQube.
+      - name: Build with Maven
+        run: mvn -B clean install -DskipTests
+
+      # Paso 4: Analizar con SonarQube
+      - name: Analyze with SonarQube
+        # Se recomienda usar la versión más reciente del action o una versión específica y fija.
+        # uses: SonarSource/sonarqube-scan-action@v2.x
+        uses: SonarSource/sonarqube-scan-action@7295e71c9583053f5bf40e9d4068a0c974603ec8
+        env:
+          # Es ALTAMENTE recomendado usar secretos de GitHub para estos valores por razones de seguridad.
+          # GITHUB_TOKEN es proporcionado automáticamente por GitHub Actions.
+          GITHUB_TOKEN: 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 # Necesario para obtener información de PRs
+          # SONAR_TOKEN y SONAR_HOST_URL deben configurarse como secretos en tu repositorio de GitHub.
+          SONAR_TOKEN: a69149b0bc5c31bb5274f2e704eaa3246a686eed # Genera un token en SonarQube y añádelo a los secretos de este repo
+          SONAR_HOST_URL: https://gp.elidemy.com # Añade la URL de tu instancia SonarQube a los secretos de este repo
+        with:
+          # Argumentos adicionales para el escáner de SonarQube
+          args:
+            # Clave única de tu proyecto en SonarQube.
+            -Dsonar.projectKey=spring-pipeline-sonar
+            -Dsonar.sources=src/main/java
+            -Dsonar.java.binaries=target/classes
+            -Dsonar.tests=src/test/java
+            -Dsonar.junit.reportPaths=target/surefire-reports
+            -Dsonar.jacoco.reportPaths=target/jacoco.exec
+            -Dsonar.verbose=true
